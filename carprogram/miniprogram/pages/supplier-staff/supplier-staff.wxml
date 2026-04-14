@@ -1,0 +1,110 @@
+<view class="staff-container">
+  <!-- 添加按钮 -->
+  <view class="add-btn-wrap">
+    <button class="add-btn" bindtap="openStaffDialog">+ 添加救援人员</button>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:if="{{staffList.length > 0}}" class="staff-list">
+    <view class="staff-card" wx:for="{{staffList}}" wx:key="id">
+
+      <!-- 头部 -->
+      <view class="card-header">
+        <text class="name">{{item.name}}</text>
+        <view class="status {{item.status}}">
+          <text>{{item.status === 'online' ? '在线' : '离线'}}</text>
+        </view>
+      </view>
+
+      <!-- 电话 -->
+      <view class="card-row">
+        <text class="label">电话</text>
+        <text class="value">{{item.phone}}</text>
+      </view>
+
+      <!-- 技能 -->
+      <view class="card-row">
+        <text class="label">技能</text>
+        <view class="skill-tags">
+          <view class="tag">
+            <text>{{item.skill || '未填写'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作 -->
+      <view class="card-actions">
+        <button 
+          class="btn edit"
+          bindtap="openStaffDialog"
+          data-staff="{{item}}"
+        >编辑</button>
+
+        <button 
+          class="btn delete"
+          bindtap="handleDeleteStaff"
+          data-id="{{item.id}}"
+        >删除</button>
+
+        <button 
+          class="btn status-btn {{item.status === 'online' ? 'offline' : 'online'}}"
+          bindtap="changeStaffStatus"
+          data-id="{{item.id}}"
+          data-status="{{item.status}}"
+        >
+          {{item.status === 'online' ? '设为离线' : '设为在线'}}
+        </button>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-tip">
+    <text class="empty-text">暂无救援人员，点击添加</text>
+  </view>
+
+  <!-- 弹窗 -->
+  <modal
+    wx:if="{{dialogVisible}}"
+    title="{{dialogType === 'add' ? '添加救援人员' : '编辑救援人员'}}"
+    show="{{dialogVisible}}"
+    confirm-text="保存"
+    cancel-text="取消"
+    bindconfirm="saveStaff"
+    bindcancel="closeStaffDialog"
+  >
+    <view class="dialog-form">
+      <view class="form-item">
+        <text class="form-label">姓名</text>
+        <input 
+          class="form-input"
+          value="{{staffForm.name}}"
+          bindinput="onFormInput"
+          data-key="name"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">电话</text>
+        <input 
+          class="form-input"
+          value="{{staffForm.phone}}"
+          bindinput="onFormInput"
+          data-key="phone"
+          type="number"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">技能</text>
+        <input 
+          class="form-input"
+          value="{{staffForm.skill}}"
+          bindinput="onFormInput"
+          data-key="skill"
+        />
+      </view>
+    </view>
+  </modal>
+</view>

@@ -1,0 +1,83 @@
+.container {
+  padding: 40rpx 20rpx;
+  display: flex;
+  justify-content: center;
+  background-color: #F5F5F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 600rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  box-shadow: 0 2rpx 20rpx rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-size: 36rpx;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+
+/* 身份选择 */
+.role-group {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.role-item {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  text-align: center;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.role-item.active {
+  background: #F53F3F;
+  color: #fff;
+  border-color: #F53F3F;
+}
+
+.input-item {
+  margin-bottom: 30rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+input {
+  height: 80rpx;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  background: #f9f9f9;
+  font-size: 28rpx;
+}
+
+.register-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #F53F3F;
+  color: #fff;
+  font-size: 32rpx;
+  border-radius: 8rpx;
+  margin-top: 30rpx;
+}
+
+.register-btn.loading {
+  background: #F86666;
+}

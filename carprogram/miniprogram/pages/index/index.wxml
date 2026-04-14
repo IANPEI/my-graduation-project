@@ -1,0 +1,142 @@
+<view class="container">
+  <!-- 车主页面内容：仅当身份为owner时显示 -->
+  <block wx:if="{{identity === 'owner'}}">
+    <!-- 紧急呼救快捷入口 -->
+    <view class="card">
+      <view class="row-between">
+        <text class="title">紧急救援</text>
+        <text class="aux-text">15分钟快速响应</text>
+      </view>
+      <view class="divider"></view>
+      <view class="btn" bindtap="goToCallRescue">一键呼救</view>
+    </view>
+
+    <!-- 核心服务入口 -->
+    <view class="card">
+      <text class="title">常用服务</text>
+      <view class="service-list">
+        <view class="service-item" bindtap="goToOrderList">
+          <view class="service-icon">📜</view>
+          <text class="service-name">我的订单</text>
+        </view>
+        <view class="service-item" bindtap="goToMine">
+          <view class="service-icon">👤</view>
+          <text class="service-name">个人中心</text>
+        </view>
+        <view class="service-item" bindtap="showHelpModal">
+          <view class="service-icon">❓</view>
+          <text class="service-name">救援指南</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 救援须知 -->
+    <view class="card">
+      <text class="title">救援须知</text>
+      <view class="notice-list">
+        <view class="notice-item">
+          <text class="aux-text">• 请确保定位权限已开启，以便快速匹配救援人员</text>
+        </view>
+        <view class="notice-item">
+          <text class="aux-text">• 救援服务覆盖主城区，偏远地区请提前确认</text>
+        </view>
+        <view class="notice-item">
+          <text class="aux-text">• 服务费用按实际救援类型收取，无隐藏费用</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 救援指南弹窗 -->
+    <view class="modal-mask" wx:if="{{showHelpModal}}" catchtouchmove="noop"></view>
+    <view class="modal-content" wx:if="{{showHelpModal}}">
+      <view class="modal-header">
+        <text class="modal-title">救援服务指南</text>
+        <view class="close-btn" bindtap="hideHelpModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="help-section">
+          <text class="help-subtitle">一、救援服务范围</text>
+          <text class="help-text">1. 主城区：渝中区、江北区、南岸区、九龙坡区、沙坪坝区、大渡口区、北碚区、渝北区、巴南区全域覆盖；</text>
+          <text class="help-text">2. 远郊区县：万州区、涪陵区、永川区等核心城区覆盖，乡镇地区需提前联系客服确认；</text>
+          <text class="help-text">3. 高速路段：仅覆盖高速服务区及出入口，主线救援需联系高速执法队。</text>
+        </view>
+        <view class="help-section">
+          <text class="help-subtitle">二、救援服务类型</text>
+          <text class="help-text">1. 道路救援：拖车（≤10km免费，超出按5元/km收费）、换胎（自备轮胎免费，提供轮胎按市场价）、搭电（50元/次）；</text>
+          <text class="help-text">2. 故障抢修：发动机故障、变速箱故障、电路故障等现场简易维修；</text>
+          <text class="help-text">3. 应急服务：送油（50元/10L）、送水、应急开锁（80元/次）。</text>
+        </view>
+        <view class="help-section">
+          <text class="help-subtitle">三、救援流程</text>
+          <text class="help-text">1. 发起呼救：填写故障类型、定位地址，提交救援订单；</text>
+          <text class="help-text">2. 匹配服务商：系统自动匹配3km内最近的救援服务商，5分钟内响应；</text>
+          <text class="help-text">3. 救援执行：救援人员联系车主确认详情，15分钟内到达现场（主城区）；</text>
+          <text class="help-text">4. 完成结算：救援完成后，车主确认服务并在线支付（支持微信/支付宝）。</text>
+        </view>
+        <view class="help-section">
+          <text class="help-subtitle">四、注意事项</text>
+          <text class="help-text">1. 请准确填写故障类型和定位，避免救援人员误判；</text>
+          <text class="help-text">2. 车辆停放在安全区域，开启双闪，在车后150米放置三角警示牌；</text>
+          <text class="help-text">3. 贵重物品请随身携带，救援人员仅负责车辆救援，不承担物品保管责任；</text>
+          <text class="help-text">4. 如有任何问题，可联系客服：400-123-4567（7×24小时）。</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="confirm-btn" bindtap="hideHelpModal">我已了解</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 服务商页面内容：仅当身份为supplier时显示 -->
+  <block wx:if="{{identity === 'supplier'}}">
+    <!-- 待处理订单卡片 -->
+    <view class="card" bindtap="goToOrderList">
+      <view class="row-between">
+        <text class="title">待处理救援订单</text>
+        <text class="count">{{pendingCount}}</text>
+      </view>
+      <view class="divider"></view>
+      <text class="aux-text">点击查看并接单</text>
+      <!-- 待处理订单列表 + 接单按钮 -->
+      <view class="pending-order-list" wx:if="{{orderList.length > 0}}">
+        <view class="pending-order-item" wx:for="{{orderList}}" wx:key="orderNo">
+          <!-- 订单基础信息（分行显示） -->
+          <view class="order-info">
+            <text class="order-no">订单号：{{item.orderNo}}</text>
+            <text class="order-type">救援类型：{{item.faultTypeName || '未知'}}</text>
+            <text class="order-address">救援地址：{{item.address || '未填写'}}</text>
+            <text class="order-time">求助时间：{{item.createTime}}</text>
+          </view>
+          <!-- 接单按钮 -->
+          <button class="accept-btn" bindtap="handleAcceptOrder" data-order-no="{{item.orderNo}}">
+            立即接单
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 核心功能入口 -->
+    <view class="card">
+      <text class="title">服务商功能</text>
+      <view class="func-list">
+        <view class="func-item" bindtap="goToStaffManage">
+          <view class="func-icon">👥</view>
+          <text class="func-name">救援人员管理</text>
+        </view>
+        <view class="func-item" bindtap="goToOrderStat">
+          <view class="func-icon">📊</view>
+          <text class="func-name">订单统计</text>
+        </view>
+        <view class="func-item" bindtap="goToProfile">
+          <view class="func-icon">⚙️</view>
+          <text class="func-name">服务商资料</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
+    <view class="card">
+      <view class="logout-btn" bindtap="logout">退出登录</view>
+    </view>
+  </block>
+</view>

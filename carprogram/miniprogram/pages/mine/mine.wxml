@@ -1,0 +1,39 @@
+<view class="profile-page">
+  <!-- 未登录状态 -->
+  <view class="unlogin-box" wx:if="{{!isLogin && !loading}}">
+    <!-- 取消头像，直接居中显示登录按钮 -->
+    <button bindtap="goToLogin" class="login-btn">立即登录</button>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view class="user-info-box" wx:elif="{{isLogin && !loading}}">
+    <!-- 取消头像，用户名居中+放大字体 -->
+    <view class="user-name">{{userInfo.nickName}}</view>
+    <view class="user-phone">{{userInfo.phone}}</view>
+    <button bindtap="logout" class="logout-btn">退出登录</button>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-box" wx:else>
+    <van-loading type="spinner" color="#1989fa">加载中...</van-loading>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="func-list">
+    <view class="func-item" bindtap="goToOrderList">
+      <image src="/images/icon-order.png" class="custom-icon"></image>
+      <text>我的订单</text>
+      <icon type="arrowright" size="24"></icon>
+    </view>
+    <view class="func-item" bindtap="goToFeedback">
+      <image src="/images/icon-advice.png" class="custom-icon"></image>
+      <text>意见反馈</text>
+      <icon type="arrowright" size="24"></icon>
+    </view>
+    <view class="func-item" bindtap="goToAbout">
+      <image src="/images/icon-about.png" class="custom-icon"></image>
+      <text>关于我们</text>
+      <icon type="arrowright" size="24"></icon>
+    </view>
+  </view>
+</view>

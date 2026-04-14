@@ -1,0 +1,67 @@
+<view class="page">
+  <!-- 顶部提示 -->
+  <view class="tip-box">
+    <text class="tip-text">请填写救援信息，我们会尽快安排救援人员</text>
+  </view>
+
+  <!-- 表单卡片 -->
+  <view class="card">
+    <!-- 救援地址 -->
+    <view class="form-item">
+      <view class="item-left" bindtap="chooseLocation">
+        <text class="icon">📍</text>
+        <view class="item-content">
+          <text class="label">救援地址</text>
+          <text class="value {{locationDesc ? 'has-value' : ''}}">
+            {{locationDesc || '请选择救援地址'}}
+          </text>
+        </view>
+      </view>
+      <icon type="arrowright" size="18"></icon>
+    </view>
+
+    <!-- 故障类型 -->
+    <picker 
+      mode="selector"
+      range="{{faultTypeNames}}"
+      value="{{faultTypeIndex === -1 ? 0 : faultTypeIndex}}"
+      bindchange="onFaultTypeChange"
+    >
+      <view class="form-item">
+        <view class="item-left">
+          <text class="icon">🔧</text>
+          <view class="item-content">
+            <text class="label">故障类型</text>
+            <text class="value {{faultTypeIndex !== -1 ? 'has-value' : ''}}">
+              {{faultTypeIndex === -1 ? '请选择故障类型' : faultTypes[faultTypeIndex].name}}
+            </text>
+          </view>
+        </view>
+        <icon type="arrowright" size="18"></icon>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="remark-title">备注信息</view>
+    <textarea
+      class="remark-input"
+      placeholder="请输入车辆信息、具体故障等（选填）"
+      value="{{remark}}"
+      bindinput="onRemarkInput"
+    ></textarea>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-box">
+    <button
+      class="submit-btn"
+      bindtap="callRescue"
+      loading="{{submitting}}"
+      disabled="{{!locationDesc || faultTypeIndex === -1 || submitting}}"
+    >
+    立即呼叫救援
+    </button>
+  </view>
+</view>

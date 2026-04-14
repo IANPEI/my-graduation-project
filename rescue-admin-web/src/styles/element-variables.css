@@ -1,0 +1,101 @@
+/* src/styles/element-variables.css */
+/* 1. 定义全局 CSS 变量，对应原 SCSS 变量 */
+:root {
+  /* 主色调 - 救援红为主色 */
+  --el-color-primary: #f53f3f;
+  --el-color-primary-light-3: #f76666;
+  --el-color-primary-light-5: #f98d8d;
+  --el-color-primary-light-7: #fab4b4;
+  --el-color-primary-light-8: #fbcbcb;
+  --el-color-primary-light-9: #fde2e2;
+  --el-color-primary-dark-2: #e03838;
+
+  /* 辅助色 */
+  --el-color-success: #52c41a;
+  --el-color-warning: #faad14;
+  --el-color-danger: #f53f3f; /* 与主色一致 */
+  --el-color-info: #1890ff;
+
+  /* 文本颜色 */
+  --el-text-color-primary: #333333; /* 深灰主文本 */
+  --el-text-color-regular: #666666;
+  --el-text-color-secondary: #999999;
+  --el-text-color-placeholder: #cccccc;
+
+  /* 边框颜色 */
+  --el-border-color-base: #eeeeee;
+  --el-border-color-light: #f2f2f2;
+  --el-border-color-lighter: #f5f5f5;
+
+  /* 背景颜色 */
+  --el-bg-color-page: #f5f5f7; /* 页面背景浅灰 */
+  --el-bg-color-container: #ffffff;
+  --el-bg-color: #ffffff;
+  --el-bg-color-overlay: #ffffff;
+}
+
+/* 2. 覆盖 Element Plus 组件默认样式，确保配色生效 */
+/* 按钮样式 */
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: var(--el-color-primary);
+  --el-button-border-color: var(--el-color-primary);
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: var(--el-color-primary-light-3);
+  --el-button-hover-border-color: var(--el-color-primary-light-3);
+  --el-button-active-text-color: #ffffff;
+  --el-button-active-bg-color: var(--el-color-primary-dark-2);
+  --el-button-active-border-color: var(--el-color-primary-dark-2);
+}
+
+/* 标签样式 */
+.el-tag--primary {
+  --el-tag-text-color: #ffffff;
+  --el-tag-bg-color: var(--el-color-primary);
+  --el-tag-border-color: var(--el-color-primary);
+}
+
+.el-tag--danger {
+  --el-tag-text-color: #ffffff;
+  --el-tag-bg-color: var(--el-color-danger);
+  --el-tag-border-color: var(--el-color-danger);
+}
+
+/* 输入框样式 */
+.el-input__wrapper {
+  --el-input-border-color: var(--el-border-color-base);
+  --el-input-text-color: var(--el-text-color-primary);
+  --el-input-placeholder-text-color: var(--el-text-color-placeholder);
+}
+
+/* 表格样式 */
+.el-table {
+  --el-table-text-color: var(--el-text-color-primary);
+  --el-table-header-text-color: var(--el-text-color-primary);
+  --el-table-border-color: var(--el-border-color-base);
+  --el-table-row-hover-bg-color: #fafafa;
+}
+
+/* 菜单样式（侧边栏） */
+.el-menu {
+  --el-menu-text-color: #ffffff;
+  --el-menu-active-text-color: var(--el-color-primary);
+  --el-menu-bg-color: #333333;
+  --el-menu-hover-bg-color: #444444;
+}
+
+/* 卡片样式 */
+.el-card {
+  --el-card-bg-color: var(--el-bg-color-container);
+  --el-card-border-color: var(--el-border-color-base);
+}
+
+/* 分页样式 */
+.el-pagination {
+  --el-pagination-text-color: var(--el-text-color-primary);
+  --el-pagination-button-bg-color: #ffffff;
+  --el-pagination-button-border-color: var(--el-border-color-base);
+  --el-pagination-button-hover-bg-color: #f5f5f5;
+  --el-pagination-button-active-bg-color: var(--el-color-primary);
+  --el-pagination-button-active-text-color: #ffffff;
+}

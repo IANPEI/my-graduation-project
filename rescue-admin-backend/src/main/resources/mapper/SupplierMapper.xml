@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.SupplierMapper">
+    <sql id="Base_Column_List">
+        id, name, contact, phone, city, address, status,
+        create_time as createTime, update_time as updateTime
+    </sql>
+
+    <select id="getLatestApplyList" resultType="com.rescue.entity.Supplier">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_supplier
+        WHERE status = 'pending'
+        ORDER BY create_time DESC
+        LIMIT 10
+    </select>
+
+    <update id="updateStatusById">
+        UPDATE t_supplier
+        SET status = #{status}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <sql id="OrderDetail_Column_List_With_Supplier">
+        o.order_no as orderNo,
+        o.fault_type_id as faultTypeId,
+        ft.name as faultTypeName,
+        u.nickname,
+        u.phone,
+        o.address,
+        o.latitude,
+        o.longitude,
+        o.remark,
+        o.status,
+        o.create_time as createTime,
+        o.update_time as updateTime,
+        o.cancel_time as cancelTime,
+        o.supplier_id as supplierId,
+        o.user_id as userId,
+        o.evaluate_status as evaluateStatus,
+        s.name as supplierName,
+        s.contact as supplierContact,
+        s.phone as supplierPhone,
+        st.name as staffName,
+        st.phone as staffPhone,
+        st.skill as staffSkill
+    </sql>
+
+    <select id="selectOrderList" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE
+        o.supplier_id = #{supplierId}
+        OR o.supplier_id IS NULL
+        OR o.supplier_id = ''
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectOrderPage" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE
+        (
+
+        (o.supplier_id = #{supplierId})
+        OR
+
+        (o.supplier_id IS NULL AND #{status} = 'pending')
+        )
+
+        <if test="orderNo != null and orderNo != ''">
+            AND o.order_no = #{orderNo}
+        </if>
+
+        <if test="status != null and status != ''">
+            AND o.status = #{status}
+        </if>
+
+        <if test="startDate != null and startDate != ''">
+            AND o.create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND o.create_time &lt;= #{endDate}
+        </if>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectOrderDetail" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE o.order_no = #{orderNo}
+    </select>
+
+    <update id="acceptOrder">
+        UPDATE t_order
+        SET
+            supplier_id = #{supplierId},
+            status = 'processing',
+            update_time = NOW()
+        WHERE order_no = #{orderNo}
+    </update>
+
+    <update id="completeOrder">
+        UPDATE t_order
+        SET
+            status = 'completed',
+            update_time = NOW()
+        WHERE order_no = #{orderNo}
+    </update>
+
+    <!-- ✅ 关键：id 完全和接口一致！ -->
+    <select id="listLatestPendingSimpleOrders" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT
+            o.order_no as orderNo,
+            o.fault_type_id as faultTypeId,
+            ft.name as faultTypeName,
+            o.address,
+            o.status,
+            o.create_time as createTime
+        FROM t_order o
+                 LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        WHERE
+            o.status = 'pending'
+          AND (o.supplier_id IS NULL OR o.supplier_id = '')
+        ORDER BY o.create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="countFaultTypeDistribution" resultType="java.util.Map">
+        SELECT ft.name as faultTypeName, COUNT(o.order_no) as count
+        FROM t_order o
+                 LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        WHERE o.supplier_id = #{supplierId} AND o.status = 'completed'
+        GROUP BY ft.name
+    </select>
+
+    <select id="countLast7DaysOrder" resultType="java.util.Map">
+        SELECT DATE_FORMAT(o.create_time, '%m-%d') as orderDate, COUNT(o.order_no) as count
+        FROM t_order o
+        WHERE
+            o.supplier_id = #{supplierId}
+          AND o.status = 'completed'
+          AND o.create_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY DATE_FORMAT(o.create_time, '%m-%d')
+        ORDER BY orderDate ASC
+    </select>
+
+</mapper>

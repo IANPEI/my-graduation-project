@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.FaultTypeMapper">
+    <!-- 基础字段查询 -->
+    <sql id="Base_Column_List">
+        id, name, sort, status, create_time as createTime
+    </sql>
+
+    <!-- 查询启用的故障类型（按排序） -->
+    <select id="selectEnableList" resultType="com.rescue.entity.FaultType">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        t_fault_type
+        WHERE
+        status = 1
+        ORDER BY
+        sort ASC
+    </select>
+</mapper>

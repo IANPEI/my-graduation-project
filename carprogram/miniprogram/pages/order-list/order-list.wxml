@@ -1,0 +1,49 @@
+<view class="container">
+  <!-- 订单状态筛选 -->
+  <view class="card">
+    <view class="filter-bar">
+      <view class="filter-item {{activeStatus === 'all' ? 'active' : ''}}" bindtap="handleStatusChange" data-status="all">全部</view>
+      <view class="filter-item {{activeStatus === 'pending' ? 'active' : ''}}" bindtap="handleStatusChange" data-status="pending">待救援</view>
+      <view class="filter-item {{activeStatus === 'completed' ? 'active' : ''}}" bindtap="handleStatusChange" data-status="completed">已完成</view>
+      <view class="filter-item {{activeStatus === 'cancelled' ? 'active' : ''}}" bindtap="handleStatusChange" data-status="cancelled">已取消</view>
+    </view>
+  </view>
+
+  <!-- ✅ 核心修复：给订单列表包裹 order-list-container 容器 -->
+  <view class="order-list-container">
+    <!-- 订单列表 -->
+    <block wx:for="{{orderList}}" wx:key="orderNo">
+      <view class="card order-item" bindtap="goToOrderDetail" data-order-no="{{item.orderNo}}">
+        <view class="row-between">
+          <text class="order-no">订单号：{{item.orderNo}}</text>
+          <text class="order-status {{item.statusClass}}">{{item.statusText}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="order-info">
+          <text class="aux-text">故障类型：{{item.faultTypeName}}</text>
+        </view>
+        <view class="order-info">
+          <text class="aux-text">救援时间：{{item.createTimeText}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="row-between">
+          <text class="aux-text">救援地址：{{item.address}}</text>
+          <button 
+            wx:if="{{item.status === 'pending'}}" 
+            class="btn-cancel" 
+            catchtap="cancelOrder" 
+            data-order-no="{{item.orderNo}}"
+            catchtap="true">
+            取消
+          </button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空数据提示 -->
+    <view wx:if="{{orderList.length === 0 && !loading}}" class="empty-tip">暂无订单记录</view>
+    
+    <!-- 加载中提示 -->
+    <view wx:if="{{loading && orderList.length > 0}}" class="loading-tip">加载中...</view>
+  </view>
+</view>

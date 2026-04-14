@@ -1,0 +1,92 @@
+/* 页面整体样式 */
+.profile-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 0 30rpx;
+}
+
+/* 未登录状态 */
+.unlogin-box {
+  padding: 100rpx 0;
+  text-align: center;
+}
+
+.login-btn {
+  background-color: #1989fa;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 24rpx 60rpx;
+  font-size: 32rpx;
+}
+
+/* 已登录用户信息 */
+.user-info-box {
+  padding: 80rpx 0;
+  text-align: center;
+}
+
+.user-name {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.user-phone {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.logout-btn {
+  background-color: #fff;
+  color: #f53f3f;
+  border: 1rpx solid #f53f3f;
+  border-radius: 8rpx;
+  padding: 16rpx 40rpx;
+  font-size: 28rpx;
+}
+
+/* 加载中 */
+.loading-box {
+  padding: 100rpx 0;
+  text-align: center;
+}
+
+/* 功能列表容器 */
+.func-list {
+  background-color: #fff;
+  border-radius: 12rpx;
+  margin-top: 20rpx;
+  overflow: hidden;
+}
+
+/* 功能项核心样式：左对齐 + 垂直居中 */
+.func-item {
+  height: 100rpx;
+  font-size: 32rpx;
+  padding: 0 30rpx;
+  border-bottom: 1rpx solid #eee;
+  display: flex;
+  align-items: center; 
+  box-sizing: border-box;
+}
+
+.func-item:last-child {
+  border-bottom: none;
+}
+
+/* 自定义图标统一样式（所有功能项图标通用） */
+.custom-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 20rpx;
+}
+
+/* 右侧箭头图标样式 */
+.func-item icon[type="arrowright"] {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: auto; /* 箭头自动靠右 */
+}

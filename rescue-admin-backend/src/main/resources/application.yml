@@ -1,0 +1,35 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /rescue_admin
+
+spring:
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/rescue_admin?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: Go15696785371
+  # 关闭 thymeleaf 缓存
+  thymeleaf:
+    cache: false
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.rescue.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# JWT 配置
+jwt:
+  # 新密钥：32 个字符（256 位），满足安全要求
+  secret: "rescue_admin_2026_secret_1234567890abcdef"
+  expire: 86400000  # 过期时间 24 小时
+
+  # 腾讯地图配置
+tencent:
+  map:
+    key: 7BSBZ-2Z6E3-QLB36-R5IH5-ZZBQ3-AKFR5
+    geo-url: https://apis.map.qq.com/ws/geocoder/v1/

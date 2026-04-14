@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.UserMapper">
+    <!-- 根据账号查询用户 -->
+    <select id="selectByAccount" parameterType="String" resultType="com.rescue.entity.User">
+        SELECT
+            id, account, password, identity_type as identityType, supplier_id as supplierId,phone,
+            status, create_time as createTime, update_time as updateTime, nickname
+        FROM
+            t_user
+        WHERE
+            account = #{account}
+    </select>
+</mapper>

@@ -1,0 +1,119 @@
+page {
+  background: #F5F6F8;
+}
+
+.page {
+  padding: 24rpx;
+  padding-bottom: 120rpx; /* 给底部留空间 */
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+/* 顶部提示 */
+.tip-box {
+  background-color: #fffbe6;
+  padding: 15rpx;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+}
+.tip-text {
+  font-size: 26rpx;
+  color: #ff9900;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 10rpx 0;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+
+/* 表单项 */
+.form-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #F2F2F2;
+}
+.form-item:last-child {
+  border-bottom: none;
+}
+.item-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+}
+.item-content {
+  display: flex;
+  flex-direction: column;
+}
+.label {
+  font-size: 24rpx;
+  color: #999;
+}
+.value {
+  font-size: 30rpx;
+  color: #bbb;
+  margin-top: 4rpx;
+}
+.value.has-value {
+  color: #333;
+}
+
+/* 备注 */
+.remark-title {
+  font-size: 28rpx;
+  color: #333;
+  padding: 24rpx 24rpx 0;
+}
+.remark-input {
+  width: 100%;
+  min-height: 130rpx;
+  padding: 20rpx 24rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 8rpx;
+  margin:24rpx;
+}
+
+/* ✅ 按钮：正常流式布局，会滚动，不固定、不被遮挡 */
+.bottom-box {
+  margin-top: 40rpx;
+  padding-bottom: 120rpx; /* ✅ 关键：避开 TabBar 遮挡 */
+}
+.submit-btn {
+  height: 96rpx;
+  line-height: 96rpx;
+  background: #E63946;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  width: 100%;
+}
+.submit-btn[disabled] {
+  background: #ccc !important;
+}
+
+/* 定位按钮样式 */
+.location-actions {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.location-btn {
+  background-color: #0088ff;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 4rpx;
+}

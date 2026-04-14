@@ -1,0 +1,59 @@
+/* 自定义 TabBar 基础样式（必须） */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: 1rpx solid #eee;
+  z-index: 999;
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* TabBar 项容器 */
+.tab-bar-items {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100rpx;
+  /* 移除多余内边距，让内容更紧凑 */
+  padding-top: 0;
+}
+
+/* 单个 TabBar 项 */
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  /* 优化垂直居中，让图标文字更紧凑 */
+  padding: 8rpx 0;
+}
+
+/* TabBar 图标 */
+.tab-bar-icon {
+  width: 56rpx;
+  height: 56rpx;
+  margin-bottom: 1rpx;
+}
+
+/* TabBar 文字 */
+.tab-bar-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1;
+}
+
+/* 选中状态文字 */
+.tab-bar-text.selected {
+  color: #007aff;
+  font-weight: bold;
+}

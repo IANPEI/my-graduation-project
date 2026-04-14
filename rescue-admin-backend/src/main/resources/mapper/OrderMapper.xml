@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.OrderMapper">
+    <sql id="Base_Column_List">
+        order_no, fault_type_id,
+        status, supplier_id, create_time, update_time, user_id,
+        latitude, longitude, address, remark, evaluate_status, cancel_time,
+        supplier_lat, supplier_lng
+    </sql>
+
+    <sql id="OrderDetail_Column_List_With_Supplier">
+        o.order_no as orderNo,
+        o.fault_type_id as faultTypeId,
+        ft.name as faultTypeName,
+        u.nickname,  <!-- 这里改成 nickname！！ -->
+        u.phone,
+        o.address,
+        o.latitude,
+        o.longitude,
+        o.remark,
+        o.status,
+        o.create_time as createTime,
+        o.update_time as updateTime,
+        o.cancel_time as cancelTime,
+        o.supplier_id as supplierId,
+        o.user_id as userId,
+        o.evaluate_status as evaluateStatus,
+        s.name as supplierName,
+        s.contact as supplierContact,
+        s.phone as supplierPhone,
+        st.name as staffName,
+        st.phone as staffPhone,
+        st.skill as staffSkill
+    </sql>
+
+    <select id="selectOrderListBySupplier" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT
+            o.order_no AS orderNo,
+            ft.name AS faultTypeName,
+            u.nickname,
+            u.phone,
+            o.address,
+            o.status,
+            o.evaluate_status AS isEvaluated
+        FROM t_order o
+                 LEFT JOIN t_user u ON o.user_id = u.id
+                 LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        WHERE o.supplier_id = #{supplierId}
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectOrderDetailByOrderNo" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE o.order_no = #{orderNo} AND o.user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectByOrderNo" parameterType="String" resultType="com.rescue.entity.Order">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_order
+        WHERE order_no = #{orderNo}
+    </select>
+
+    <select id="countPendingOrdersBySupplier" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM t_order
+        WHERE supplier_id = #{supplierId} AND status = 'pending'
+    </select>
+
+    <select id="countTodayNewOrdersBySupplier" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM t_order
+        WHERE supplier_id = #{supplierId} AND DATE(create_time) = CURDATE()
+    </select>
+
+    <select id="countCompletedOrdersBySupplier" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM t_order
+        WHERE supplier_id = #{supplierId} AND status = 'completed'
+    </select>
+
+    <select id="countMonthCompletedOrdersBySupplier" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM t_order
+        WHERE supplier_id = #{supplierId}
+          AND status = 'completed'
+          AND DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+    </select>
+
+    <select id="selectOrderListWithFaultType" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT DISTINCT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE o.user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND o.status = #{status}
+        </if>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectSupplierOrderListWithFullDetail" resultType="com.rescue.dto.OrderDetailDTO">
+        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        FROM t_order o
+        LEFT JOIN t_user u ON o.user_id = u.id
+        LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
+        LEFT JOIN t_supplier s ON o.supplier_id = s.id
+        LEFT JOIN t_order_staff os ON o.order_no = os.order_no
+        LEFT JOIN t_staff st ON os.staff_id = st.id
+        WHERE o.supplier_id = #{supplierId}
+        ORDER BY o.create_time DESC
+    </select>
+
+</mapper>

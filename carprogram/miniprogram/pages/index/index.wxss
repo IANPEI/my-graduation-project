@@ -1,0 +1,316 @@
+/* ================= 全局通用样式 ================= */
+page {
+  background-color: #f5f5f5;
+  font-size: 28rpx;
+  color: #333;
+  padding-bottom: 120rpx !important;
+}
+
+.container {
+  padding: 20rpx;
+  box-sizing: border-box;
+  padding-bottom: 120rpx;
+}
+
+/* 卡片通用样式 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 文本通用样式 */
+.title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.aux-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 布局通用样式 */
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.divider {
+  height: 1rpx;
+  background: #eee;
+  margin: 20rpx 0;
+  width: 100%;
+}
+
+/* 按钮通用样式 */
+.btn {
+  background: #007aff;
+  color: #fff;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  transition: background 0.2s;
+}
+
+.btn:active {
+  background: #0066cc;
+}
+
+/* 加载/空数据通用样式 */
+.loading-wrapper {
+  text-align: center;
+  padding: 50rpx 0;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 30rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* ================= 车主页面专属样式 ================= */
+/* 常用服务列表 */
+.service-list {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20rpx;
+  flex-wrap: wrap;
+}
+
+.service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  padding: 10rpx 0;
+}
+
+.service-icon {
+  font-size: 60rpx;
+  margin-bottom: 10rpx;
+}
+
+.service-name {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+}
+
+/* 救援须知列表 */
+.notice-list {
+  margin-top: 20rpx;
+}
+
+.notice-item {
+  margin-bottom: 10rpx;
+  line-height: 1.5;
+}
+
+/* ================= 服务商页面专属样式 ================= */
+/* 待处理订单计数 */
+.count {
+  font-size: 28rpx;
+  color: #ff3b30;
+  font-weight: 600;
+}
+
+/* 订单列表项 */
+.pending-order-list {
+  margin-top: 20rpx;
+}
+
+.pending-order-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+  margin-bottom: 10rpx;
+}
+
+.order-info {
+  margin-bottom: 10rpx;
+}
+
+.order-no {
+  font-size: 28rpx;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10rpx;
+  color: #333;
+}
+
+.order-type, .order-address, .order-time {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 5rpx;
+  line-height: 1.4;
+}
+
+/* 接单按钮 */
+.accept-btn {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 10rpx 20rpx;
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.accept-btn:active {
+  background: #0066cc;
+}
+
+.accept-btn[disabled] {
+  background: #ccc;
+  color: #999;
+}
+
+/* 服务商功能列表 */
+.func-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.func-item {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #007aff;
+  padding: 15rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.func-icon {
+  font-size: 32rpx;
+  margin-right: 15rpx;
+}
+
+.func-name {
+  flex: 1;
+}
+
+/* 退出登录按钮 */
+.logout-btn {
+  background: #ff3b30;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 20rpx 0;
+  width: 100%;
+  font-size: 32rpx;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.logout-btn:active {
+  background: #e63328;
+}
+
+/* ================= 救援指南弹窗样式 ================= */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  width: 85%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* 弹窗头部 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+  padding-bottom: 15rpx;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.close-btn {
+  font-size: 32rpx;
+  color: #999;
+  width: 40rpx;
+  height: 40rpx;
+  text-align: center;
+  line-height: 40rpx;
+}
+
+/* 弹窗主体 */
+.modal-body {
+  margin-bottom: 30rpx;
+}
+
+.help-section {
+  margin-bottom: 20rpx;
+}
+
+.help-subtitle {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+  display: block;
+  color: #007aff;
+}
+
+.help-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+/* 弹窗底部 */
+.modal-footer {
+  text-align: center;
+}
+
+.confirm-btn {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 15rpx 30rpx;
+  font-size: 28rpx;
+  width: 100%;
+}
+
+.confirm-btn:active {
+  background: #0066cc;
+}

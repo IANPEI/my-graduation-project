@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 对应 OrderEvaluateMapper 接口的XML映射文件 -->
+<mapper namespace="com.rescue.mapper.OrderEvaluateMapper">
+
+    <!-- 基础字段映射（与数据库表字段对应） -->
+    <resultMap id="BaseResultMap" type="com.rescue.entity.OrderEvaluate">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="supplier_id" property="supplierId" jdbcType="VARCHAR"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 基础字段列表（复用） -->
+    <sql id="Base_Column_List">
+        id, order_no, user_id, supplier_id, score, content, create_time
+    </sql>
+
+    <!-- 插入评价（MyBatis-Plus 会自动使用，也可手动调用） -->
+    <insert id="insert" parameterType="com.rescue.entity.OrderEvaluate">
+        INSERT INTO t_order_evaluate
+            (order_no, user_id, supplier_id, score, content, create_time)
+        VALUES
+            (#{orderNo}, #{userId}, #{supplierId}, #{score}, #{content}, #{createTime})
+    </insert>
+
+    <!-- 自定义查询：根据订单编号查询评价 -->
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_order_evaluate
+        WHERE order_no = #{orderNo}
+    </select>
+
+    <!-- 自定义查询：根据服务商ID分页查询评价 -->
+    <select id="selectBySupplierId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_order_evaluate
+        WHERE supplier_id = #{supplierId}
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 自定义查询：统计服务商平均评分 -->
+    <select id="selectAvgScoreBySupplierId" resultType="java.math.BigDecimal">
+        SELECT AVG(score)
+        FROM t_order_evaluate
+        WHERE supplier_id = #{supplierId}
+    </select>
+
+</mapper>

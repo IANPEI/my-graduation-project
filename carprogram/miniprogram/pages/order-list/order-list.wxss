@@ -1,0 +1,152 @@
+/* 页面根容器：重置默认样式 */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 0 16rpx;
+  background-color: #fafafa;
+}
+
+/* 卡片基础样式 */
+.card {
+  background: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 订单列表容器：核心控制间距和高度 */
+.order-list-container {
+  /* 适配 TabBar 高度 + 安全区 + 额外间距 */
+  padding-bottom: calc(48px + env(safe-area-inset-bottom) + 16rpx);
+  box-sizing: border-box;
+  /* 最大高度：屏幕高度 - 筛选栏 - TabBar - 安全区 */
+  max-height: calc(100vh - 80rpx - 48px - env(safe-area-inset-bottom));
+  /* 溢出滚动，保证内容可查看 */
+  overflow-y: auto;
+  /* 防止滚动穿透 */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 筛选栏：固定顶部，避免滚动消失 */
+.filter-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 80rpx;
+  border-bottom: 1px solid #f5f5f5;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  /* 筛选栏本身的内边距 */
+  padding: 0 10rpx;
+  box-sizing: border-box;
+}
+
+/* 筛选项样式 */
+.filter-item {
+  font-size: 28rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+}
+.filter-item.active {
+  background-color: #1677FF;
+  color: #FFFFFF;
+}
+
+/* 订单项样式 */
+.order-item {
+  cursor: pointer;
+  padding: 24rpx 20rpx;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16rpx;
+  border-radius: 12rpx;
+  box-sizing: border-box;
+}
+
+/* 订单号样式 */
+.order-no {
+  font-weight: 500;
+  font-size: 28rpx;
+}
+
+/* 订单状态样式 */
+.order-status {
+  font-size: 26rpx;
+}
+.order-status.pending { color: #FF7D00; }
+.order-status.completed { color: #00B42A; }
+.order-status.cancelled { color: #999999; }
+
+/* 订单信息行 */
+.order-info {
+  margin: 8rpx 0;
+}
+
+/* 行内两端对齐 */
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* 分割线 */
+.divider {
+  height: 1px;
+  background-color: #f5f5f5;
+  margin: 12rpx 0;
+}
+
+.aux-text {
+  font-size: 26rpx;
+  color: #666;
+  /* 核心：允许文字换行，自动折行 */
+  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 最多显示2行，超出显示省略号 */
+  -webkit-box-orient: vertical;
+  /* 给地址文本留出右边距，不贴到按钮 */
+  margin-right: 16rpx;
+}
+
+/* 统一取消按钮样式 */
+.btn-cancel {
+  /* 固定尺寸，保证所有按钮大小一致 */
+  width: 120rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 24rpx;
+  /* 按钮样式 */
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  border-radius: 30rpx;
+  /* 防止按钮变形 */
+  flex-shrink: 0;
+  /* 文字居中 */
+  text-align: center;
+  /* 去掉按钮默认样式 */
+  padding: 0;
+  margin: 0;
+}
+
+/* 空数据提示 */
+.empty-tip {
+  text-align: center;
+  padding: 100rpx 0;
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 加载中提示 */
+.loading-tip {
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 26rpx;
+  color: #666;
+}
+

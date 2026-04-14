@@ -1,0 +1,85 @@
+/* 全局重置 */
+page {
+  font-size: 28rpx;
+  color: #333333;
+  background-color: #F5F5F7;
+  height: 100%;
+  line-height: 1.6;
+  padding-bottom: 150rpx;
+}
+
+/* 通用容器：统一内边距 */
+.container {
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 通用卡片：白色背景+轻微阴影，提升层次感 */
+.card {
+  background-color: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 通用按钮：朴素风格，无多余装饰 */
+.btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 8rpx;
+  background-color: #1677FF;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  margin-top: 20rpx;
+}
+
+/* 次要按钮：灰色基调，用于非核心操作 */
+.btn-secondary {
+  background-color: #EEEEEE;
+  color: #666666;
+}
+
+/* 标题样式：统一字号和间距 */
+.title {
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+/* 辅助文本：更小字号+浅灰色 */
+.aux-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+/* 空数据提示：居中+浅灰 */
+.empty-tip {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999999;
+  font-size: 28rpx;
+}
+
+/* 分割线：浅灰，弱化视觉 */
+.divider {
+  height: 1rpx;
+  background-color: #EEEEEE;
+  margin: 16rpx 0;
+}
+
+/* 行布局：两端对齐 */
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 行布局：左对齐 */
+.row-left {
+  display: flex;
+  align-items: center;
+}

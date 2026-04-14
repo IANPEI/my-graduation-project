@@ -1,0 +1,28 @@
+<view class="about-page">
+  <!-- 头部logo/标题 -->
+  <view class="about-header">
+    <image src="/images/logo.png" class="logo"></image>
+    <text class="title">救援服务平台</text>
+  </view>
+
+  <!-- 核心信息 -->
+  <view class="about-content">
+    <view class="about-item">
+      <text class="label">平台介绍</text>
+      <text class="value">专注于道路救援服务的一站式平台，为车主提供快速、专业的救援解决方案。</text>
+    </view>
+    <view class="about-item">
+      <text class="label">联系我们</text>
+      <text class="value">客服电话：400-123-4567</text>
+      <text class="value">邮箱：contact@jiuyuan.com</text>
+    </view>
+    <view class="about-item">
+      <text class="label">版本信息</text>
+      <text class="value">V1.0.0</text>
+    </view>
+    <view class="about-item">
+      <text class="label">服务条款</text>
+      <text class="value">使用本平台即表示您同意遵守《用户服务协议》和《隐私政策》</text>
+    </view>
+  </view>
+</view>

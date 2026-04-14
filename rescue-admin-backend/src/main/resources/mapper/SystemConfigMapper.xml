@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.SystemConfigMapper">
+    <!-- 基础字段查询 -->
+    <sql id="Base_Column_List">
+        id, platform_name as platformName, service_phone as servicePhone,
+        response_time as responseTime, notice, update_time as updateTime
+    </sql>
+
+    <!-- 获取默认配置（ID=1） -->
+    <select id="selectDefaultConfig" resultType="com.rescue.entity.SystemConfig">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        t_system_config
+        WHERE
+        id = 1
+    </select>
+</mapper>

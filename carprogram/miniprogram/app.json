@@ -1,0 +1,57 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/call-rescue/call-rescue",
+    "pages/order-list/order-list",
+    "pages/order-detail/order-detail",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/supplier-order/supplier-order",
+    "pages/supplier-staff/supplier-staff",
+    "pages/about/about",
+    "pages/supplier-profile/supplier-profile",
+    "pages/register/register"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#333333",
+    "navigationBarTitleText": "汽车救援服务",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#666666",
+    "selectedColor": "#333333",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/call-rescue/call-rescue",
+        "text": "一键呼救"
+      },
+      {
+        "pagePath": "pages/order-list/order-list",
+        "text": "我的订单"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于救援地址精准定位"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ]
+}

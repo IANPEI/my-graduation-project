@@ -1,0 +1,127 @@
+<view class="order-container">
+
+<!-- 订单状态筛选 -->
+<view class="filter-bar">
+  <view 
+    class="filter-item {{activeStatus === item.key ? 'active' : ''}}"
+    wx:for="{{filterList}}"
+    wx:key="key"
+    bindtap="switchOrderStatus"
+    data-status="{{item.key}}"
+  >
+    {{item.name}}
+  </view>
+</view>
+
+<!-- 订单列表 -->
+<view class="order-list" wx:if="{{orderList.length > 0}}">
+  <view class="order-card" wx:for="{{orderList}}" wx:key="orderNo">
+    <!-- 订单头部 -->
+    <view class="order-header">
+      <text class="order-no">订单号：{{item.orderNo}}</text>
+      <text class="order-status" style="color: {{getStatusColor(item.status)}}">
+        {{getStatusText(item.status)}}
+      </text>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="order-info">
+      <view class="info-item">
+        <text class="label">救援类型：</text>
+        <text class="value">{{item.faultTypeName}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">求助人：</text>
+        <text class="value">{{item.nickname}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">联系电话：</text>
+        <text class="value">{{item.phone}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">救援地址：</text>
+        <text class="value">{{item.address}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">求助时间：</text>
+        <text class="value">{{item.createTime}}</text>
+      </view>
+      <view class="info-item" wx:if="{{item.acceptTime}}">
+        <text class="label">接单时间：</text>
+        <text class="value">{{item.acceptTime}}</text>
+      </view>
+      <view class="info-item" wx:if="{{item.completeTime}}">
+        <text class="label">完成时间：</text>
+        <text class="value">{{item.completeTime}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="order-actions" wx:if="{{item.status === 'pending'}}">
+      <button 
+        class="accept-btn" 
+        bindtap="handleAcceptOrder"
+        data-order-no="{{item.orderNo}}"
+        loading="{{item.loading}}"
+      >
+        立即接单
+      </button>
+    </view>
+    <view class="order-actions" wx:if="{{item.status === 'processing'}}">
+  <!-- 取消订单按钮 -->
+  <button 
+    class="cancel-btn" 
+    bindtap="handleCancelOrder"
+    data-order-no="{{item.orderNo}}"
+  >
+    取消订单
+  </button>
+
+  <!-- 标记完成按钮 -->
+  <button 
+    class="complete-btn" 
+    bindtap="handleCompleteOrder"
+    data-order-no="{{item.orderNo}}"
+  >
+    标记完成
+  </button>
+</view>
+  </view>
+</view>
+
+<!-- 空数据提示 -->
+<view class="empty-tip" wx:else>
+  <text>暂无{{getActiveStatusText()}}订单</text>
+</view>
+</view>
+
+<view class="modal" wx:if="{{showStaffModal}}">
+<view class="modal-content">
+  <view class="modal-title">选择接单师傅</view>
+  
+  <scroll-view class="staff-list" scroll-y>
+    <view 
+      class="staff-item {{selectedStaffId === item.id ? 'active' : ''}}"
+      wx:for="{{staffList}}"
+      wx:key="id"
+      bindtap="selectStaff"
+      data-id="{{item.id}}"
+      data-name="{{item.name}}"
+    >
+      <text>{{item.name}}（{{item.skill}}）</text>
+      <text class="phone">{{item.phone}}</text>
+    </view>
+  </scroll-view>
+
+  <view class="modal-btns">
+    <button class="cancel" bindtap="closeStaffModal">取消</button>
+    <button 
+      class="confirm" 
+      bindtap="confirmAssignStaff"
+      disabled="{{!selectedStaffId}}"
+    >
+      确认接单
+    </button>
+  </view>
+</view>
+</view>

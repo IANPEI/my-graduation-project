@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rescue.mapper.StaffMapper">
+    <!-- 基础字段查询 -->
+    <sql id="Base_Column_List">
+        id, supplier_id as supplierId, name, phone, skill,
+        status, create_time as createTime, update_time as updateTime
+    </sql>
+
+    <!-- 根据ID修改状态 -->
+    <update id="updateStatusById">
+        UPDATE t_staff
+        SET status = #{status}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 按服务商ID统计人员总数 -->
+    <select id="countBySupplierId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM t_staff
+        WHERE supplier_id = #{supplierId}
+    </select>
+
+    <!-- 按服务商ID统计在线人员数 -->
+    <select id="countOnlineBySupplierId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM t_staff
+        WHERE supplier_id = #{supplierId} AND status = 'online'
+    </select>
+</mapper>

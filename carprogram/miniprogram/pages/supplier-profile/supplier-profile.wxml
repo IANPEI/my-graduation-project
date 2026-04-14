@@ -1,0 +1,106 @@
+<view class="profile-container">
+  <!-- 表单区域 -->
+  <view class="form-card">
+    <!-- 服务商名称 -->
+    <view class="form-item">
+      <text class="form-label">服务商名称</text>
+      <input 
+        class="form-input {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="请输入服务商名称"
+        value="{{supplierInfo.name}}"
+        bindinput="onInputChange"
+        data-key="name"
+        disabled="{{!isEditMode}}"
+      />
+    </view>
+
+    <!-- 联系人 -->
+    <view class="form-item">
+      <text class="form-label">联系人</text>
+      <input 
+        class="form-input {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="请输入联系人姓名"
+        value="{{supplierInfo.contact}}"
+        bindinput="onInputChange"
+        data-key="contact"
+        disabled="{{!isEditMode}}"
+      />
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input 
+        class="form-input {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="请输入联系电话"
+        value="{{supplierInfo.phone}}"
+        bindinput="onInputChange"
+        data-key="phone"
+        disabled="{{!isEditMode}}"
+        type="number"
+      />
+    </view>
+
+    <!-- 服务地址 -->
+    <view class="form-item">
+      <text class="form-label">服务地址</text>
+      <textarea 
+        class="form-textarea {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="请输入详细服务地址"
+        value="{{supplierInfo.address}}"
+        bindinput="onInputChange"
+        data-key="address"
+        disabled="{{!isEditMode}}"
+        maxlength="200"
+      />
+    </view>
+
+    <!-- 营业执照编号 -->
+    <view class="form-item">
+      <text class="form-label">营业执照编号</text>
+      <input 
+        class="form-input {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="请输入营业执照编号"
+        value="{{supplierInfo.license}}"
+        bindinput="onInputChange"
+        data-key="license"
+        disabled="{{!isEditMode}}"
+      />
+    </view>
+
+    <!-- 救援范围 -->
+    <view class="form-item">
+      <text class="form-label">救援范围</text>
+      <input 
+        class="form-input {{!isEditMode ? 'disabled' : ''}}" 
+        placeholder="例：主城区/周边50公里"
+        value="{{supplierInfo.scope}}"
+        bindinput="onInputChange"
+        data-key="scope"
+        disabled="{{!isEditMode}}"
+      />
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="btn-group">
+    <button 
+      class="edit-btn" 
+      wx:if="{{!isEditMode}}"
+      bindtap="switchToEditMode"
+    >
+      编辑资料
+    </button>
+    
+    <view class="action-btns" wx:if="{{isEditMode}}">
+      <button class="cancel-btn" bindtap="cancelEdit">取消</button>
+      <button 
+        class="save-btn" 
+        bindtap="saveProfile"
+        loading="{{loading}}"
+      >
+        保存修改
+      </button>
+    </view>
+  </view>
+</view>
