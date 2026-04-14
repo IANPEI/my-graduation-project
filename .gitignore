@@ -1,0 +1,19 @@
+# Java 忽略
+target/
+*.iml
+.idea/
+*.class
+
+# Vue 忽略
+node_modules/
+dist/
+.env.local
+.env.development.local
+
+# 小程序忽略
+node_modules/
+unpackage/
+*.log
+
+# 系统文件
+.DS_Store
