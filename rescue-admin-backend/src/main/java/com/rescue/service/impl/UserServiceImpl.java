@@ -102,6 +102,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             supplier.setPhone(dto.getPhone());
             supplier.setCity(dto.getCity());
             supplier.setAddress(dto.getAddress());
+            supplier.setBusinessLicenseNo(dto.getBusinessLicenseNo());
+            supplier.setRescueQualificationNo(dto.getRescueQualificationNo());
+
             supplier.setStatus("pending"); // 待审核
             supplier.setCreateTime(new Date());
             supplier.setUpdateTime(new Date());

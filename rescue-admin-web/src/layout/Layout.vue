@@ -40,6 +40,10 @@
             <el-icon><OfficeBuilding /></el-icon>
             <template #title>用户管理</template>
           </el-menu-item>
+          <el-menu-item index="/admin/order">
+            <el-icon><Document /></el-icon>
+            <template #title>订单管理</template>
+          </el-menu-item>
           <el-menu-item index="/admin/system">
             <el-icon><Setting /></el-icon>
             <template #title>系统设置</template>
@@ -87,6 +91,7 @@ import {
   OfficeBuilding,
   Setting,
   SwitchButton,
+  Document,
 } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 

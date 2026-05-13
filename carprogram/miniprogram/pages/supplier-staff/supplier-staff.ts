@@ -6,7 +6,7 @@ interface StaffItem {
   name: string;          // 姓名
   phone: string;         // 电话
   skill: string;         // 技能
-  status: string;        // 状态：online/offline
+  status: 'online'|'busy'|'offline';        // 状态：online/offline
 }
 
 // 表单数据类型（移除status字段）
@@ -195,8 +195,8 @@ Page<{
       wx.showToast({ title: '请输入员工姓名', icon: 'none' });
       return;
     }
-    if (!staffForm.phone) {
-      wx.showToast({ title: '请输入联系电话', icon: 'none' });
+    if (!/^1[3-9]\d{9}$/.test(staffForm.phone)) {
+      wx.showToast({ title: '请输入正确的11位手机号', icon: 'none' });
       return;
     }
     if (!staffForm.skill) {

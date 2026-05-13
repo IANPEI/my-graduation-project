@@ -5,14 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rescue.dto.OrderDetailDTO;
+import com.rescue.dto.SupplierEvaluateVO;
 import com.rescue.entity.FaultType;
 import com.rescue.entity.Supplier;
 import com.rescue.entity.SystemConfig;
 import com.rescue.entity.User;
-import com.rescue.service.FaultTypeService;
-import com.rescue.service.SupplierManageService;
-import com.rescue.service.SystemConfigService;
-import com.rescue.service.UserService;
+import com.rescue.mapper.OrderMapper;
+import com.rescue.service.*;
 import com.rescue.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +48,10 @@ public class AdminController {
     public Result<Void> auditSupplier(@PathVariable String id, @RequestBody Map<String, String> params) {
         try {
             String status = params.get("status");
-            supplierManageService.auditSupplier(id, status);
+            String refuseReason = params.get("refuseReason"); // 接收拒绝理由
+
+            // 调用service，同时传 状态 + 拒绝理由
+            supplierManageService.auditSupplier(id, status, refuseReason);
             return Result.success();
         } catch (RuntimeException e) {
             return Result.error(e.getMessage());
@@ -224,4 +227,40 @@ public class AdminController {
             return Result.error("获取故障类型详情失败：" + e.getMessage());
         }
     }
+
+    @Autowired
+    private SupplierEvaluateService supplierEvaluateService;
+    @GetMapping("/supplier/evaluate/list")
+    public Result<IPage<SupplierEvaluateVO>> getEvaluateList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "5") Integer pageSize
+    ) {
+        return Result.success(supplierEvaluateService.getSupplierEvaluatePage(pageNum, pageSize));
+    }
+
+    @Autowired
+    private SupplierOrderService supplierOrderService;
+    @GetMapping("/order/list")
+    public Result<IPage<OrderDetailDTO>> getAdminOrderList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String orderNo,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
+    ) {
+        // 管理员端，不限制 supplierId，直接查所有订单
+        IPage<OrderDetailDTO> page =
+                supplierOrderService.getAdminOrderList(
+                        pageNum,
+                        pageSize,
+                        orderNo,
+                        status,
+                        startDate,
+                        endDate
+                );
+
+        return Result.success(page);
+    }
+
 }

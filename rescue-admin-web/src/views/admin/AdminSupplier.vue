@@ -40,16 +40,29 @@
       </template>
       <el-table :data="supplierList" border style="width: 100%">
         <el-table-column prop="id" label="服务商ID" width="100" />
-        <el-table-column prop="name" label="服务商名称" />
-        <el-table-column prop="contact" label="联系人" />
-        <el-table-column prop="phone" label="联系电话" />
-        <el-table-column prop="city" label="所在城市" />
-        <el-table-column prop="createTime" label="入驻时间">
+        <el-table-column prop="name" label="服务商名称" width="160" />
+        <el-table-column prop="contact" label="联系人" width="100" />
+        <el-table-column prop="phone" label="联系电话" width="150" />
+        <el-table-column prop="city" label="所在城市" width="100" />
+
+        <!-- 👇 新增 2 列表字段 -->
+        <el-table-column
+          prop="businessLicenseNo"
+          label="营业执照编号"
+          width="120"
+        />
+        <el-table-column
+          prop="rescueQualificationNo"
+          label="救援资质编号"
+          width="120"
+        />
+
+        <el-table-column prop="createTime" label="入驻时间" width="200">
           <template #default="scope">
             {{ scope.row.createTime ? formatDate(scope.row.createTime) : "-" }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
             <el-tag v-if="scope.row.status === 'enable'" type="success">
               已启用
@@ -91,7 +104,6 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页：改为 5 / 10 / 20 -->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -154,7 +166,6 @@
         </el-table-column>
       </el-table>
 
-      <!-- 用户分页：也改为 5 / 10 / 20 -->
       <el-pagination
         @size-change="handleUserSizeChange"
         @current-change="handleUserCurrentChange"
@@ -166,7 +177,6 @@
         style="margin-top: 20px; text-align: right"
       />
     </el-card>
-    <!-- ====================== 👆 用户表格结束 ====================== -->
 
     <!-- 新增/编辑服务商弹窗 -->
     <el-dialog
@@ -179,7 +189,7 @@
         ref="supplierFormRef"
         :model="supplierForm"
         :rules="supplierRules"
-        label-width="100px"
+        label-width="120px"
       >
         <el-form-item label="服务商ID" prop="id">
           <el-input
@@ -211,6 +221,21 @@
             :rows="3"
           />
         </el-form-item>
+
+        <!-- 👇 新增：两个资质编号 -->
+        <el-form-item label="营业执照编号" prop="businessLicenseNo">
+          <el-input
+            v-model="supplierForm.businessLicenseNo"
+            placeholder="请输入营业执照编号"
+          />
+        </el-form-item>
+        <el-form-item label="救援资质编号" prop="rescueQualificationNo">
+          <el-input
+            v-model="supplierForm.rescueQualificationNo"
+            placeholder="请输入救援资质编号"
+          />
+        </el-form-item>
+
         <el-form-item label="状态" prop="status" v-if="isEdit">
           <el-select v-model="supplierForm.status" placeholder="请选择状态">
             <el-option label="待审核" value="pending"></el-option>
@@ -226,7 +251,7 @@
     </el-dialog>
 
     <!-- 服务商详情弹窗 -->
-    <el-dialog v-model="detailVisible" title="服务商详情" width="600px">
+    <el-dialog v-model="detailVisible" title="服务商详情" width="700px">
       <el-descriptions :column="2" border>
         <el-descriptions-item label="服务商ID">{{
           detailForm.id || "-"
@@ -246,14 +271,23 @@
         <el-descriptions-item label="详细地址">{{
           detailForm.address || "-"
         }}</el-descriptions-item>
+
+        <!-- 👇 新增：详情页显示资质 -->
+        <el-descriptions-item label="营业执照编号">{{
+          detailForm.businessLicenseNo || "-"
+        }}</el-descriptions-item>
+        <el-descriptions-item label="救援资质编号">{{
+          detailForm.rescueQualificationNo || "-"
+        }}</el-descriptions-item>
+
         <el-descriptions-item label="状态">
           <el-tag v-if="detailForm.status === 'enable'" type="success"
             >已启用</el-tag
           >
-          <el-tag v-if="detailForm.status === 'disable'" type="danger"
+          <el-tag v-else-if="detailForm.status === 'disable'" type="danger"
             >已禁用</el-tag
           >
-          <el-tag v-if="detailForm.status === 'pending'" type="warning"
+          <el-tag v-else-if="detailForm.status === 'pending'" type="warning"
             >待审核</el-tag
           >
           <span v-else>-</span>
@@ -306,6 +340,8 @@ const supplierForm = reactive({
   city: "",
   address: "",
   status: "pending",
+  businessLicenseNo: "",
+  rescueQualificationNo: "",
 });
 
 const detailForm = reactive({});
@@ -335,6 +371,12 @@ const supplierRules = reactive({
     { pattern: /^1[3-9]\d{9}$/, message: "手机号格式错误", trigger: "blur" },
   ],
   city: [{ required: true, message: "请输入城市", trigger: "blur" }],
+  businessLicenseNo: [
+    { required: true, message: "请输入营业执照编号", trigger: "blur" },
+  ],
+  rescueQualificationNo: [
+    { required: true, message: "请输入救援资质编号", trigger: "blur" },
+  ],
 });
 
 const getSupplierListData = async () => {
@@ -395,6 +437,8 @@ const resetForm = () => {
     city: "",
     address: "",
     status: "pending",
+    businessLicenseNo: "",
+    rescueQualificationNo: "",
   });
 };
 

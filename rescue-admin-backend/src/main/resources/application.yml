@@ -33,3 +33,10 @@ tencent:
   map:
     key: 7BSBZ-2Z6E3-QLB36-R5IH5-ZZBQ3-AKFR5
     geo-url: https://apis.map.qq.com/ws/geocoder/v1/
+  # 腾讯云短信配置
+  sms:
+    secretId: 腾讯云SecretId
+    secretKey: 腾讯云SecretKey
+    appId: 短信应用SDKAppID
+    templateId: 短信模板ID
+    signName: 短信签名名称

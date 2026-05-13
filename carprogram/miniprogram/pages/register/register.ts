@@ -1,6 +1,5 @@
 import { request } from '../../utils/request';
 
-// 1. 页面数据类型
 interface RegisterPageData {
   role: 'owner' | 'supplier';
   phone: string;
@@ -10,14 +9,15 @@ interface RegisterPageData {
   contact: string;
   city: string;
   address: string;
+  // 👇 新增两个字段
+  businessLicenseNo: string;
+  rescueQualificationNo: string;
   loading: boolean;
 }
 
-// 2. 解决报错：直接使用官方标准事件类型 (不依赖低版本的 Tap)
 type InputEvent = WechatMiniprogram.Input;
 type TapEvent = WechatMiniprogram.CustomEvent;
 
-// 3. 页面自定义方法类型
 interface RegisterPageMethods {
   selectRole(e: TapEvent): void;
   onPhoneInput(e: InputEvent): void;
@@ -27,10 +27,12 @@ interface RegisterPageMethods {
   onContactInput(e: InputEvent): void;
   onCityInput(e: InputEvent): void;
   onAddressInput(e: InputEvent): void;
+  // 👇 新增输入方法
+  onBusinessLicenseNoInput(e: InputEvent): void;
+  onRescueQualificationNoInput(e: InputEvent): void;
   doRegister(): Promise<void>;
 }
 
-// 🌟 核心修复：Page 泛型必须传入 2 个参数 (Data + Methods)
 Page<RegisterPageData, RegisterPageMethods>({
   data: {
     role: 'owner',
@@ -41,18 +43,18 @@ Page<RegisterPageData, RegisterPageMethods>({
     contact: '',
     city: '',
     address: '',
+    // 👇 初始化
+    businessLicenseNo: '',
+    rescueQualificationNo: '',
     loading: false
   },
 
-  // 选择身份
   selectRole(e: TapEvent) {
-    // 安全类型断言
     this.setData({
-      role: e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.role as 'owner' | 'supplier'
+      role: e.currentTarget.dataset.role as 'owner' | 'supplier'
     });
   },
 
-  // 输入事件
   onPhoneInput(e: InputEvent) {
     this.setData({ phone: e.detail.value.trim() });
   },
@@ -75,22 +77,46 @@ Page<RegisterPageData, RegisterPageMethods>({
     this.setData({ address: e.detail.value.trim() });
   },
 
-  // 注册提交
+  // ==============================================
+  // ✅ 新增：营业执照编号输入
+  // ==============================================
+  onBusinessLicenseNoInput(e: InputEvent) {
+    this.setData({ businessLicenseNo: e.detail.value.trim() });
+  },
+
+  // ==============================================
+  // ✅ 新增：救援资质编号输入
+  // ==============================================
+  onRescueQualificationNoInput(e: InputEvent) {
+    this.setData({ rescueQualificationNo: e.detail.value.trim() });
+  },
+
+  // ==============================================
+  // ✅ 注册提交（完整修复）
+  // ==============================================
   async doRegister() {
-    const { role, phone, nickname, password, supplierName, contact, city, address, loading } = this.data;
+    const {
+      role, phone, nickname, password,
+      supplierName, contact, city, address,
+      businessLicenseNo, rescueQualificationNo,
+      loading
+    } = this.data;
 
     if (loading) return;
 
-    // 非空校验
+    // 基础校验
     if (!phone) { wx.showToast({ title: '请输入手机号', icon: 'none' }); return; }
     if (!nickname) { wx.showToast({ title: '请输入昵称', icon: 'none' }); return; }
     if (!password) { wx.showToast({ title: '请设置密码', icon: 'none' }); return; }
 
+    // 服务商额外校验
     if (role === 'supplier') {
       if (!supplierName) { wx.showToast({ title: '请输入服务商名称', icon: 'none' }); return; }
       if (!contact) { wx.showToast({ title: '请输入联系人', icon: 'none' }); return; }
       if (!city) { wx.showToast({ title: '请输入城市', icon: 'none' }); return; }
       if (!address) { wx.showToast({ title: '请输入详细地址', icon: 'none' }); return; }
+      if (!businessLicenseNo) { wx.showToast({ title: '请输入营业执照编号', icon: 'none' }); return; }
+      if (!rescueQualificationNo) { wx.showToast({ title: '请输入救援资质编号', icon: 'none' }); return; }
     }
 
     this.setData({ loading: true });
@@ -108,12 +134,27 @@ Page<RegisterPageData, RegisterPageMethods>({
           supplierName: role === 'supplier' ? supplierName : '',
           contact,
           city,
-          address
+          address,
+          // 👇 新增提交
+          businessLicenseNo,
+          rescueQualificationNo
         }
       });
-
-      wx.showToast({ title: '注册成功', icon: 'success' });
-      setTimeout(() => wx.navigateBack(), 1500);
+      // ✅ 服务商：注册成功后弹出审核提示
+      if (role === 'supplier') {
+        wx.showModal({
+          title: '注册成功',
+          content: '您的账号已提交，需线下联系管理员审核资质，审核通过后才可登录使用',
+          showCancel: false,
+          confirmText: '我知道了',
+          success: () => {
+            wx.navigateBack();
+          }
+        });
+      } else {
+        wx.showToast({ title: '注册成功', icon: 'success' });
+        setTimeout(() => wx.navigateBack(), 1500);
+      }
 
     } catch (err: any) {
       wx.showToast({ title: err.msg || '注册失败', icon: 'none' });

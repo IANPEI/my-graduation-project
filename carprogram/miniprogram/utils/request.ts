@@ -1,4 +1,4 @@
-const baseURL = "http://10.14.205.21:8089/rescue_admin";
+const baseURL = "http://localhost:8089/rescue_admin";
 
 // 保留原有 RequestOptions 接口，新增泛型 R（返回数据类型）
 interface RequestOptions extends WechatMiniprogram.RequestOption {

@@ -8,13 +8,13 @@
   <view wx:if="{{staffList.length > 0}}" class="staff-list">
     <view class="staff-card" wx:for="{{staffList}}" wx:key="id">
 
-      <!-- 头部 -->
-      <view class="card-header">
-        <text class="name">{{item.name}}</text>
-        <view class="status {{item.status}}">
-          <text>{{item.status === 'online' ? '在线' : '离线'}}</text>
-        </view>
+  
+    <view class="card-header">
+      <text class="name">{{item.name}}</text>
+      <view class="status {{item.status}}">
+      <text>{{item.status === 'online' ? '在线' : item.status === 'busy' ? '救援中' : '离线'}}</text>
       </view>
+    </view>
 
       <!-- 电话 -->
       <view class="card-row">

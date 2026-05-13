@@ -6,10 +6,12 @@ import com.rescue.dto.OrderDetailDTO;
 import com.rescue.entity.FaultType;
 import com.rescue.entity.Order;
 import com.rescue.service.OwnerOrderService;
+import com.rescue.service.SupplierOrderService;
 import com.rescue.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -81,4 +83,14 @@ public class OwnerOrderController {
         return Result.success();
     }
 
+    @Autowired
+    private SupplierOrderService supplierOrderService;
+    @GetMapping("/export/{orderNo}")
+    public void exportOrder(
+            @PathVariable String orderNo,
+            @RequestParam Long userId,
+            HttpServletResponse response) {
+
+        supplierOrderService.exportOrder(orderNo, response);
+    }
 }

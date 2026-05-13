@@ -54,4 +54,27 @@
         WHERE supplier_id = #{supplierId}
     </select>
 
+    <!-- 1. 查询某个商家总评价数 -->
+    <select id="getTotalEvaluateCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_order_evaluate
+        WHERE supplier_id = #{supplierId}
+    </select>
+
+    <!-- 2. 查询某个商家好评数（4星+5星） -->
+    <select id="getGoodEvaluateCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_order_evaluate
+        WHERE supplier_id = #{supplierId}
+          AND score >= 4
+    </select>
+
+    <!-- 3. 查询某个商家平均分（同功能，保留兼容） -->
+    <select id="getAvgScore" resultType="java.math.BigDecimal">
+        SELECT IFNULL(AVG(score), 0)
+        FROM t_order_evaluate
+        WHERE supplier_id = #{supplierId}
+    </select>
+
+
 </mapper>

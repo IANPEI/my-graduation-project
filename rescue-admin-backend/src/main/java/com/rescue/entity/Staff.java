@@ -40,7 +40,7 @@ public class Staff {
     private String skill;
 
     /**
-     * 状态：online-在线，offline-离线
+     * 状态：online-在线，offline-离线，busy-救援中
      */
     private String status;
 

@@ -40,6 +40,49 @@
       </el-col>
     </el-row>
 
+    <!-- 服务商好评率统计 -->
+    <el-card shadow="hover" style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span>服务商好评率统计</span>
+        </div>
+      </template>
+      <el-table :data="supplierEvaluateList" border style="width: 100%">
+        <el-table-column prop="supplierId" label="服务商ID" width="120" />
+        <el-table-column prop="name" label="服务商名称" />
+        <el-table-column prop="totalCount" label="总评价数" width="100" />
+        <el-table-column prop="goodCount" label="好评数" width="100" />
+        <el-table-column prop="goodRate" label="好评率" width="130">
+          <template #default="scope">
+            <el-tag type="success" v-if="scope.row.goodRate >= 80">
+              {{ scope.row.goodRate.toFixed(2) }}%
+            </el-tag>
+            <el-tag type="warning" v-else-if="scope.row.goodRate >= 60">
+              {{ scope.row.goodRate.toFixed(2) }}%
+            </el-tag>
+            <el-tag type="danger" v-else>
+              {{ scope.row.goodRate.toFixed(2) }}%
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="avgScore" label="平均评分" width="120">
+          <template #default="scope">
+            {{ scope.row.avgScore ? scope.row.avgScore.toFixed(1) : "0.0" }} ⭐
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        v-model:current-page="evaluatePage.currentPage"
+        v-model:page-size="evaluatePage.pageSize"
+        :total="evaluatePage.total"
+        :page-sizes="[5, 10, 20]"
+        layout="total, sizes, prev, pager, next, jumper"
+        style="margin-top: 20px; text-align: right"
+        @size-change="loadSupplierEvaluate"
+        @current-change="loadSupplierEvaluate"
+      />
+    </el-card>
+
     <!-- 服务商入驻申请 -->
     <el-card shadow="hover" style="margin-top: 20px">
       <template #header>
@@ -52,6 +95,16 @@
         <el-table-column prop="name" label="服务商名称" />
         <el-table-column prop="contact" label="联系人" />
         <el-table-column prop="phone" label="联系电话" />
+        <el-table-column
+          prop="businessLicenseNo"
+          label="营业执照编号"
+          min-width="160"
+        />
+        <el-table-column
+          prop="rescueQualificationNo"
+          label="救援资质编号"
+          min-width="160"
+        />
         <el-table-column prop="createTime" label="申请时间">
           <template #default="scope">
             {{ scope.row.createTime ? formatDate(scope.row.createTime) : "-" }}
@@ -59,7 +112,6 @@
         </el-table-column>
         <el-table-column label="状态">
           <template #default="scope">
-            <!-- 待审核显示红色，已通过显示绿色，已拒绝显示灰色 -->
             <el-tag
               :type="
                 scope.row.status === 'pending'
@@ -79,39 +131,88 @@
             </el-tag>
           </template>
         </el-table-column>
-        <!-- 新增：审核操作列 -->
-        <el-table-column label="操作" width="180">
+
+        <el-table-column label="操作" width="120">
           <template #default="scope">
-            <!-- 只有待审核才显示审核按钮 -->
             <el-button
-              type="success"
+              type="primary"
               size="small"
               plain
-              @click="handleApproveSupplier(scope.row.id, 'enable')"
+              @click="openEditDialog(scope.row)"
               v-if="scope.row.status === 'pending'"
             >
-              通过
-            </el-button>
-            <el-button
-              type="info"
-              size="small"
-              plain
-              @click="handleApproveSupplier(scope.row.id, 'disable')"
-              v-if="scope.row.status === 'pending'"
-            >
-              拒绝
+              编辑审核
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
+    <!-- 👇 完全统一风格的审核弹窗 -->
+    <el-dialog
+      v-model="dialogVisible"
+      title="服务商入驻审核"
+      width="750px"
+      @close="closeDialog"
+    >
+      <el-form v-if="currentSupplier">
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="服务商ID">{{
+            currentSupplier.id
+          }}</el-descriptions-item>
+          <el-descriptions-item label="服务商名称">{{
+            currentSupplier.name
+          }}</el-descriptions-item>
+          <el-descriptions-item label="联系人">{{
+            currentSupplier.contact
+          }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话">{{
+            currentSupplier.phone
+          }}</el-descriptions-item>
+          <el-descriptions-item label="所在城市">{{
+            currentSupplier.city
+          }}</el-descriptions-item>
+          <el-descriptions-item label="详细地址">{{
+            currentSupplier.address
+          }}</el-descriptions-item>
+          <el-descriptions-item label="营业执照编号">
+            {{ currentSupplier.businessLicenseNo }}
+          </el-descriptions-item>
+          <el-descriptions-item label="救援资质编号">
+            {{ currentSupplier.rescueQualificationNo }}
+          </el-descriptions-item>
+          <el-descriptions-item label="申请时间">
+            {{ formatDate(currentSupplier.createTime) }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <div style="margin-top: 20px">
+          <el-radio-group v-model="auditResult" style="margin-bottom: 15px">
+            <el-radio label="enable">审核通过</el-radio>
+            <el-radio label="disable">审核拒绝</el-radio>
+          </el-radio-group>
+
+          <el-input
+            v-if="auditResult === 'disable'"
+            v-model="refuseReason"
+            type="textarea"
+            rows="3"
+            placeholder="请输入拒绝理由，将短信通知服务商"
+          />
+        </div>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="submitAudit">确认提交</el-button>
+      </template>
+    </el-dialog>
+
     <!-- 订单趋势 -->
     <el-card shadow="hover" style="margin-top: 20px">
       <template #header>
         <span>近7天订单趋势</span>
       </template>
-      <!-- ECharts 容器 -->
       <div id="orderTrendChart" style="width: 100%; height: 300px"></div>
     </el-card>
   </div>
@@ -120,14 +221,16 @@
 <script setup>
 import { reactive, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
-// 引入 ECharts
+import { ElMessage, ElMessageBox } from "element-plus";
 import * as echarts from "echarts";
-import { getAdminHomeData, approveSupplier } from "@/api/admin";
+import {
+  getAdminHomeData,
+  approveSupplier,
+  getSupplierEvaluateList,
+} from "@/api/admin";
 
 const router = useRouter();
 
-// 工作台数据（从后端获取）
 const homeData = reactive({
   supplierCount: 0,
   monthNewSupplierCount: 0,
@@ -138,211 +241,160 @@ const homeData = reactive({
   userCount: 0,
   monthNewUserCount: 0,
   supplierApplyList: [],
-  // 新增订单趋势数据（默认模拟数据，可替换为后端返回数据）
   orderTrendData: {
     dates: ["7天前", "6天前", "5天前", "4天前", "3天前", "2天前", "1天前"],
     counts: [120, 200, 150, 80, 70, 110, 130],
   },
 });
 
-// 格式化日期（YYYY-MM-DD → MM-DD）
 const formatChartDate = (dateStr) => {
   if (!dateStr) return "";
-  return dateStr.split("-").slice(1).join("-"); // 截取后两位：2026-03-11 → 03-11
+  return dateStr.split("-").slice(1).join("-");
 };
 
-// 格式化时间（用于申请时间显示）
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
-  // 兼容不同时间格式，保留时分秒
   const date = new Date(dateStr);
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
 
-// 服务商入驻审核（通过/拒绝）
-const handleApproveSupplier = async (id, status) => {
+// ====================== 审核弹窗逻辑 ======================
+const dialogVisible = ref(false);
+const currentSupplier = ref(null);
+const auditResult = ref("enable");
+const refuseReason = ref("");
+
+const openEditDialog = (row) => {
+  currentSupplier.value = row;
+  auditResult.value = "enable";
+  refuseReason.value = "";
+  dialogVisible.value = true;
+};
+
+const closeDialog = () => {
+  dialogVisible.value = false;
+  currentSupplier.value = null;
+  refuseReason.value = "";
+};
+
+const submitAudit = async () => {
+  if (!currentSupplier.value) return;
+  const id = currentSupplier.value.id;
+  const status = auditResult.value;
+
   try {
-    const res = await approveSupplier(id, status);
-    if (res.code === 200) {
-      ElMessage.success(
-        status === "enable" ? "审核通过成功" : "已拒绝该服务商申请",
-      );
-
-      // 👇 加固：先获取数据，再渲染图表
-      const newRes = await getAdminHomeData();
-      if (newRes.code === 200) {
-        Object.assign(homeData, newRes.data);
+    if (status === "enable") {
+      await ElMessageBox.confirm("确认通过该服务商入驻申请？", "提示");
+    } else {
+      if (!refuseReason.value) {
+        ElMessage.warning("请填写拒绝理由");
+        return;
       }
+      await ElMessageBox.confirm("确认拒绝？", "提示");
+    }
 
-      // 延迟一点确保数据更新
+    const res = await approveSupplier(id, status, refuseReason.value);
+    if (res.code === 200) {
+      ElMessage.success("操作成功");
+      closeDialog();
+
+      // 延迟刷新，保证后台修改完成
       setTimeout(() => {
-        initOrderChart();
-      }, 200);
+        loadHomeData();
+      }, 300);
+
+      loadSupplierEvaluate();
     } else {
       ElMessage.error(res.msg);
     }
-  } catch (error) {
-    ElMessage.error("审核操作失败");
-    console.error(error);
+  } catch (e) {
+    ElMessage.info("已取消");
   }
 };
 
-// 初始化 ECharts 图表
-const initOrderChart = () => {
-  // 获取图表容器
-  const chartDom = document.getElementById("orderTrendChart");
-  if (!chartDom) return;
-
-  // 初始化图表实例
-  const myChart = echarts.init(chartDom);
-
-  // 处理后端返回的日期，优化显示
-  const chartDates =
-    homeData.orderTrendData?.dates?.map((item) => formatChartDate(item)) ||
-    homeData.orderTrendData.dates;
-  // 兼容空数据
-  const chartCounts = homeData.orderTrendData?.counts || [0, 0, 0, 0, 0, 0, 0];
-
-  // 图表配置项
-  const option = {
-    // 提示框
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-      textStyle: {
-        fontSize: 12,
-      },
-      // 提示框显示完整日期
-      formatter: (params) => {
-        const originDate = homeData.orderTrendData.dates[params[0].dataIndex];
-        return `${originDate}<br/>订单数：${params[0].value}`;
-      },
-    },
-    // 图例
-    legend: {
-      data: ["订单数"],
-      top: 0,
-    },
-    // 网格
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
-    // x轴
-    xAxis: {
-      type: "category",
-      data: chartDates, // 使用格式化后的日期
-      axisLabel: {
-        fontSize: 12,
-      },
-    },
-    // y轴
-    yAxis: {
-      type: "value",
-      name: "订单数",
-      min: 0,
-      axisLabel: {
-        fontSize: 12,
-      },
-    },
-    // 系列数据
-    series: [
-      {
-        name: "订单数",
-        type: "bar",
-        data: chartCounts, // 兼容空数据
-        // 柱子样式
-        itemStyle: {
-          color: "#409EFF",
-        },
-        // 柱子宽度
-        barWidth: "60%",
-        // 显示数值
-        label: {
-          show: true,
-          position: "top",
-          fontSize: 11,
-        },
-      },
-    ],
-  };
-
-  // 设置配置项并渲染
-  myChart.setOption(option);
-
-  // 监听窗口大小变化，自适应图表
-  window.addEventListener("resize", () => {
-    myChart.resize();
-  });
-};
-
-// 页面加载时获取数据并初始化图表
-onMounted(async () => {
-  try {
-    const res = await getAdminHomeData();
-    if (res.code === 200) {
-      // 合并后端返回数据（自动覆盖模拟数据）
-      Object.assign(homeData, res.data);
-    } else {
-      ElMessage.error("获取工作台数据失败：" + res.msg);
-    }
-  } catch (error) {
-    ElMessage.error("网络错误，获取工作台数据失败");
-    console.error("获取管理员工作台数据失败：", error);
-  } finally {
-    // 无论是否获取数据成功，都初始化图表
-    initOrderChart();
-  }
+const supplierEvaluateList = ref([]);
+const evaluatePage = reactive({
+  currentPage: 1,
+  pageSize: 5,
+  total: 0,
 });
 
-// 跳转到服务商管理页
+const loadSupplierEvaluate = async () => {
+  try {
+    const res = await getSupplierEvaluateList({
+      pageNum: evaluatePage.currentPage,
+      pageSize: evaluatePage.pageSize,
+    });
+    if (res.code === 200) {
+      supplierEvaluateList.value = res.data.records || [];
+      evaluatePage.total = res.data.total || 0;
+    }
+  } catch (e) {}
+};
+
+const loadHomeData = async () => {
+  const res = await getAdminHomeData();
+  if (res.code === 200) {
+    Object.assign(homeData, res.data);
+  }
+};
+
+const initOrderChart = () => {
+  const chartDom = document.getElementById("orderTrendChart");
+  if (!chartDom) return;
+  const myChart = echarts.init(chartDom);
+  const option = {
+    tooltip: { trigger: "axis" },
+    xAxis: { type: "category", data: homeData.orderTrendData.dates },
+    yAxis: { type: "value" },
+    series: [
+      { name: "订单", type: "bar", data: homeData.orderTrendData.counts },
+    ],
+  };
+  myChart.setOption(option);
+  window.addEventListener("resize", () => myChart.resize());
+};
+
+onMounted(async () => {
+  await loadHomeData();
+  initOrderChart();
+  loadSupplierEvaluate();
+});
+
 const goToSupplier = () => {
   router.push("/admin/supplier");
 };
 </script>
 
 <style scoped>
-/* 补充统计卡片样式，让数据展示更美观 */
 .stat-card {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
-
 .stat-title {
   font-size: 14px;
   color: #666;
   margin-bottom: 10px;
 }
-
 .stat-value {
   font-size: 24px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
 }
-
 .stat-desc {
   font-size: 12px;
   color: #999;
 }
-
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .admin-home {
   padding: 0;
 }
-
-/* 解决 ECharts 容器样式问题 */
 :deep(.el-card__body) {
   padding: 20px;
 }

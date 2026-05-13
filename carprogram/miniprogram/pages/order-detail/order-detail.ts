@@ -11,7 +11,7 @@ interface OrderDetail {
   statusText?: string;
   createTime: string;
   createTimeText?: string;
-  updateTime?: string;
+  updateTime: string;
   cancelTime?: string;
   supplierId?: string;
   supplierName?: string;
@@ -62,24 +62,32 @@ Page({
     });
   },
 
-  // ✅ 【修复 1】先清理旧定时器，再开新定时器
+  // ==============================================
+  // ✅ 【最终正确】实时获取服务商位置
+  // 后端返回：{ lng: 106.xxx, lat: 29.xxx }
+  // 前端直接用，不需要任何解析！
+  // ==============================================
   startTrackSupplier() {
-    // 先清理！防止重复开定时器
     this.stopTrackSupplier();
 
     const timer = setInterval(async () => {
       try {
+        //  request 自动返回 data 里的内容
         const res = await request({
           url: "/track/get",
           method: "GET",
           data: { orderNo: this.data.orderNo }
         });
 
-        if (res.code === 200) {
-          const lat: number = res.data.lat;
-          const lng: number = res.data.lng;
+        // ✅ 直接拿经纬度！不需要解析！
+        const lat = res.lat;
+        const lng = res.lng;
+
+        if (lat && lng) {
+          console.log("获取到位置：", lat, lng); // 你会看到真实经纬度
           this.setData({
-            lat, lng,
+            lat: lat,
+            lng: lng,
             markers: [{
               id: 0, latitude: lat, longitude: lng,
               iconPath: "/images/supplier.png",
@@ -95,7 +103,6 @@ Page({
     this.setData({ trackTimer: timer });
   },
 
-  // ✅ 【修复 2】新增：强制停止定位
   stopTrackSupplier() {
     if (this.data.trackTimer) {
       clearInterval(this.data.trackTimer);
@@ -104,7 +111,7 @@ Page({
   },
 
   onUnload() {
-    this.stopTrackSupplier(); // ✅ 退出页面一定清理
+    this.stopTrackSupplier();
   },
 
   getStatusText(status: string): string {
@@ -144,15 +151,12 @@ Page({
     const { orderNo, score, content } = params;
     return request({
       url: `/owner/order/evaluate?orderNo=${orderNo}&userId=${userInfo.id}&score=${score}&content=${encodeURIComponent(content)}`,
-      method: "POST"
+      method: "POST",
     });
   },
 
-  // ✅ 【修复 3】加载详情前先停止定位，再判断是否启动
   async loadOrderDetail() {
     this.setData({ loading: true });
-
-    // 每次加载前 → 先停止旧定位
     this.stopTrackSupplier();
 
     try {
@@ -176,7 +180,7 @@ Page({
 
       this.setData({ orderDetail, loading: false });
 
-      // ✅ 只有救援中才启动
+      // 救援中 → 启动实时位置
       if (orderDetail.status === "processing") {
         this.startTrackSupplier();
       }
@@ -209,6 +213,58 @@ Page({
     }
   },
 
+  async handleExportOrder() {
+    const orderNo = this.data.orderNo;
+    const userInfo = wx.getStorageSync("userInfo");
+
+    if (!userInfo || !userInfo.id) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
+
+    wx.showLoading({ title: "导出中..." });
+
+    try {
+      const res = await request({
+        url: `/owner/order/export/${orderNo}?userId=${userInfo.id}`,
+        method: "GET",
+        requireJsonResponse: false,
+        responseType: "arraybuffer",
+      });
+
+      const fs = wx.getFileSystemManager();
+      const filePath = `${wx.env.USER_DATA_PATH}/订单_${orderNo}.xlsx`;
+
+      fs.writeFile({
+        filePath: filePath,
+        data: res,
+        encoding: "binary",
+        success: () => {
+          wx.openDocument({
+            filePath: filePath,
+            fileType: "xlsx",
+            success: () => {
+              wx.hideLoading();
+              wx.showToast({ title: "导出成功", icon: "success" });
+            },
+            fail: () => {
+              wx.hideLoading();
+              wx.showToast({ title: "打开文件失败", icon: "none" });
+            },
+          });
+        },
+        fail: () => {
+          wx.hideLoading();
+          wx.showToast({ title: "保存失败", icon: "none" });
+        },
+      });
+    } catch (err) {
+      wx.hideLoading();
+      console.error("导出失败：", err);
+      wx.showToast({ title: "导出失败", icon: "none" });
+    }
+  },
+
   openEvaluateModal() {
     this.setData({ showEvaluate: true, evaluateForm: { score: 5, content: "" } });
   },
@@ -238,7 +294,7 @@ Page({
       this.loadOrderDetail();
     } catch (err) {
       console.error("提交评价失败：", err);
-      wx.showToast({ title: (err as Error).message || "评价失败", icon: "none" });
+      wx.showToast({ title: "评价失败", icon: "none" });
     }
   },
 

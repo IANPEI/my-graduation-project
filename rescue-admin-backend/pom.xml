@@ -95,6 +95,14 @@
             <version>3.3.2</version>
         </dependency>
 
+
+        <!-- 腾讯云短信 -->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>3.1.818</version>
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import com.rescue.util.SmsUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -227,29 +228,45 @@ public class SupplierManageServiceImpl extends ServiceImpl<SupplierMapper, Suppl
     }
 
 
+    @Autowired
+    private SmsUtil smsUtil;
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void auditSupplier(String supplierId, String status) {
-        // 1. 更新服务商表状态
-        Supplier supplier = new Supplier();
-        supplier.setId(supplierId);
+    public void auditSupplier(String supplierId, String status, String refuseReason) {
+        // 1. 查询服务商信息
+        Supplier supplier = supplierMapper.selectById(supplierId);
+        if (supplier == null) {
+            throw new RuntimeException("服务商不存在");
+        }
+
+        // 2. 更新服务商状态
         supplier.setStatus(status);
         supplier.setUpdateTime(new Date());
         supplierMapper.updateById(supplier);
 
-        // 2. 更新用户表状态
-        // enable → 用户启用(1)
-        // disable → 用户禁用(0)
+        // 3. 更新关联用户状态
         Integer userStatus = "enable".equals(status) ? 1 : 0;
-
-        // 构建用户对象
         User user = new User();
         user.setStatus(userStatus);
         user.setUpdateTime(new Date());
 
-        // 条件：根据 supplierId 匹配
         LambdaUpdateWrapper<User> wrapper = Wrappers.lambdaUpdate();
         wrapper.eq(User::getSupplierId, supplierId);
         userMapper.update(user, wrapper);
+
+        // ====================== 短信发送（容错！失败不影响审核） ======================
+//        if ("disable".equals(status)) {
+//            try {
+//                // 这里尝试发短信
+//                String phone = supplier.getPhone();
+//                String[] templateParams = {"道路救援平台", refuseReason};
+//                smsUtil.sendSms(phone, templateParams);
+//                System.out.println("短信已尝试发送 → 手机号：" + phone);
+//            } catch (Exception e) {
+//                // 【重点】短信发送失败也不抛出异常，不影响审核
+//                System.out.println("短信发送失败（未配置短信或密钥错误），但审核已完成");
+//                e.printStackTrace();
+//            }
+//        }
     }
 }

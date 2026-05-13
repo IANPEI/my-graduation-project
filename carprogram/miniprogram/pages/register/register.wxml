@@ -46,10 +46,26 @@
         <text class="label">详细地址</text>
         <input placeholder="请输入详细地址" bindinput="onAddressInput" value="{{address}}" />
       </view>
+
+      <!-- 👇 新增：营业执照编号 + 救援资质编号 -->
+      <view class="input-item">
+        <text class="label">营业执照编号</text>
+        <input placeholder="请输入营业执照编号" bindinput="onBusinessLicenseNoInput" value="{{businessLicenseNo}}" />
+      </view>
+      <view class="input-item">
+        <text class="label">救援资质编号</text>
+        <input placeholder="请输入救援资质编号" bindinput="onRescueQualificationNoInput" value="{{rescueQualificationNo}}" />
+      </view>
+
     </view>
 
     <!-- 注册按钮 -->
     <view class="register-btn" bindtap="doRegister" wx:if="{{!loading}}">立即注册</view>
     <view class="register-btn loading" wx:else>注册中...</view>
+
+    <!-- 服务商提示 -->
+    <view class="tip" wx:if="{{role==='supplier'}}">
+      提示：注册成功后需线下提交纸质资质，由管理员审核通过后方可启用账号
+    </view>
   </view>
 </view>

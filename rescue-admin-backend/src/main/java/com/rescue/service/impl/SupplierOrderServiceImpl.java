@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -43,38 +44,40 @@ public class SupplierOrderServiceImpl extends ServiceImpl<OrderMapper, Order> im
 
     @Override
     public void exportOrder(String orderNo, HttpServletResponse response) {
-
         try {
-
-            // 1 查询订单详情
+            // 1. 查询（SQL 已确认完全正常）
             OrderDetailDTO orderDetail = supplierMapper.selectOrderDetail(orderNo);
 
-            if (orderDetail == null) {
-                throw new RuntimeException("订单不存在");
-            }
-
-            // 2 设置状态中文
+            // 2. 状态中文
             orderDetail.setStatusDesc(getStatusDesc(orderDetail.getStatus()));
 
-            // 3 设置响应头
-            String fileName = URLEncoder.encode("订单详情_" + orderNo, StandardCharsets.UTF_8);
+            // 3. 评价状态中文
+            String evaluateText = (orderDetail.getEvaluateStatus() != null && orderDetail.getEvaluateStatus() == 1)
+                    ? "已评价"
+                    : "未评价";
+            orderDetail.setEvaluateStatusDesc(evaluateText);
 
+            // 4. Excel 响应头
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
-            response.setHeader("Content-disposition",
-                    "attachment;filename=" + fileName + ".xlsx");
+            String fileName = URLEncoder.encode("订单_" + orderNo, "UTF-8").replaceAll("\\+", "%20");
+            response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
 
-            // 4 转成列表（EasyExcel必须是List）
+            // 5. 最简单导出，不搞任何复杂配置
             List<OrderDetailDTO> list = new ArrayList<>();
             list.add(orderDetail);
 
-            // 5 写入Excel
-            EasyExcel.write(response.getOutputStream(), OrderDetailDTO.class)
-                    .sheet("订单详情")
-                    .doWrite(list);
+            // 最稳定写法！！！
+            try (OutputStream out = response.getOutputStream()) {
+                EasyExcel.write(out, OrderDetailDTO.class)
+                        .sheet("订单详情")
+                        .doWrite(list);
+            }
 
         } catch (Exception e) {
-            throw new RuntimeException("导出订单失败");
+            // 必须打印真实错误！！！
+            e.printStackTrace();
+            throw new RuntimeException("导出失败：" + e.getMessage());
         }
     }
 
@@ -205,6 +208,12 @@ public class SupplierOrderServiceImpl extends ServiceImpl<OrderMapper, Order> im
         } catch (DuplicateKeyException e) {
             throw new RuntimeException("订单已被接单！");
         }
+
+        staffMapper.update(null,
+                new LambdaUpdateWrapper<Staff>()
+                        .eq(Staff::getId, staffId)
+                        .set(Staff::getStatus, "busy") // busy=救援中/忙碌
+        );
     }
 
     @Override
@@ -442,5 +451,34 @@ public class SupplierOrderServiceImpl extends ServiceImpl<OrderMapper, Order> im
         dto.setLast7DaysOrderCount(last7DaysList);
 
         return dto;
+    }
+
+    @Override
+    public IPage<OrderDetailDTO> getAdminOrderList(
+            Integer pageNum,
+            Integer pageSize,
+            String orderNo,
+            String status,
+            String startDate,
+            String endDate) {
+
+        Page<OrderDetailDTO> page = new Page<>(pageNum, pageSize);
+
+        // 调用你XML里的管理员全量查询
+        IPage<OrderDetailDTO> dtoPage = orderMapper.selectAdminOrderList(
+                page, orderNo, status, startDate, endDate);
+
+        // 填充中文状态
+        dtoPage.getRecords().forEach(dto -> {
+            dto.setStatusDesc(getStatusDesc(dto.getStatus()));
+            dto.setEvaluateStatusDesc(convertEvaluateDesc(dto.getEvaluateStatus()));
+        });
+
+        return dtoPage;
+    }
+    // 评价状态中文
+    private String convertEvaluateDesc(Integer evaluateStatus) {
+        if (evaluateStatus == null) return "未评价";
+        return evaluateStatus == 1 ? "已评价" : "未评价";
     }
 }

@@ -58,4 +58,14 @@ public class Supplier {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 营业执照编号
+     */
+    private String businessLicenseNo;
+
+    /**
+     * 救援资质编号
+     */
+    private String rescueQualificationNo;
 }

@@ -27,6 +27,9 @@
             <el-tag v-if="scope.row.status === 'online'" type="success">
               在线
             </el-tag>
+            <el-tag v-if="scope.row.status === 'busy'" type="warning">
+              救援中
+            </el-tag>
             <el-tag v-if="scope.row.status === 'offline'" type="danger">
               离线
             </el-tag>

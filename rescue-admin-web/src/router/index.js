@@ -15,6 +15,7 @@ const SupplierStaff = () => import("@/views/supplier/SupplierStaff.vue");
 const AdminHome = () => import("@/views/admin/AdminHome.vue");
 const AdminSupplier = () => import("@/views/admin/AdminSupplier.vue");
 const AdminSystem = () => import("@/views/admin/AdminSystem.vue");
+const AdminOrder = () => import("@/views/admin/AdminOrder.vue");
 
 const routes = [
   {
@@ -46,6 +47,7 @@ const routes = [
       { path: "home", name: "AdminHome", component: AdminHome },
       { path: "supplier", name: "AdminSupplier", component: AdminSupplier },
       { path: "system", name: "AdminSystem", component: AdminSystem },
+      { path: "order", name: "AdminOrder", component: AdminOrder },
     ],
   },
 ];

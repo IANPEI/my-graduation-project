@@ -35,6 +35,6 @@ public interface SupplierManageService extends IService<Supplier> {
     boolean updateSupplier(Supplier supplier);
 
 
-    void auditSupplier(String supplierId, String status);
+    void auditSupplier(String id, String status, String refuseReason);
 
 }

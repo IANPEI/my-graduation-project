@@ -136,3 +136,20 @@ export function getUserList(params) {
     params,
   });
 }
+
+// 获取服务商好评率
+export function getSupplierEvaluateList(params) {
+  return request({
+    url: "/admin/supplier/evaluate/list",
+    method: "get",
+    params,
+  });
+}
+
+export function getAdminOrderList(params) {
+  return request({
+    url: "/admin/order/list",
+    method: "GET",
+    params,
+  });
+}

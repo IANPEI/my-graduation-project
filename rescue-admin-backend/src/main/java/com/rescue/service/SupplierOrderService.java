@@ -72,4 +72,14 @@ public interface SupplierOrderService extends IService<Order> {
     List<OrderDetailDTO> listLatestPendingOrders(String supplierId, int limit);
 
     OrderStatisticsDTO getOrderStatistics(String supplierId);
+
+    //管理员查询所有订单
+    IPage<OrderDetailDTO> getAdminOrderList(
+            Integer pageNum,
+            Integer pageSize,
+            String orderNo,
+            String status,
+            String startDate,
+            String endDate
+    );
 }

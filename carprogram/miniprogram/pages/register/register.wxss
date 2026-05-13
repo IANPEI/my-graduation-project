@@ -81,3 +81,11 @@ input {
 .register-btn.loading {
   background: #F86666;
 }
+
+.tip {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #fa5a5a;
+  line-height: 1.5;
+  text-align: center;
+}

@@ -63,4 +63,10 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     IPage<OrderDetailDTO> selectSupplierOrderListWithFullDetail(Page<OrderDetailDTO> page, @Param("supplierId") String supplierId);
 
+    // 管理员查询所有订单（完整联表）
+    IPage<OrderDetailDTO> selectAdminOrderList(Page<OrderDetailDTO> page,
+                                               @Param("orderNo") String orderNo,
+                                               @Param("status") String status,
+                                               @Param("startDate") String startDate,
+                                               @Param("endDate") String endDate);
 }

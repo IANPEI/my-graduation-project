@@ -98,13 +98,16 @@
     </select>
 
     <select id="selectOrderDetail" resultType="com.rescue.dto.OrderDetailDTO">
-        SELECT <include refid="OrderDetail_Column_List_With_Supplier"/>
+        SELECT
+        <include refid="OrderDetail_Column_List_With_Supplier"/>,
+        e.content as content
         FROM t_order o
         LEFT JOIN t_user u ON o.user_id = u.id
         LEFT JOIN t_fault_type ft ON o.fault_type_id = ft.id
         LEFT JOIN t_supplier s ON o.supplier_id = s.id
         LEFT JOIN t_order_staff os ON o.order_no = os.order_no
         LEFT JOIN t_staff st ON os.staff_id = st.id
+        LEFT JOIN t_order_evaluate e ON o.order_no = e.order_no COLLATE utf8mb4_unicode_ci
         WHERE o.order_no = #{orderNo}
     </select>
 
